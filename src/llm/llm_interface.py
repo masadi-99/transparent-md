@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional
 from pydantic import BaseModel
-from langchain.chat_models import ChatOpenAI
+from langchain_community.chat_models import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.output_parsers import PydanticOutputParser
 

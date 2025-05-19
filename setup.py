@@ -6,6 +6,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "langchain>=0.1.0",
+        "langchain-community>=0.0.10",
         "openai>=1.0.0",
         "pydantic>=2.0.0",
         "python-dotenv>=1.0.0",
