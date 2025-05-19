@@ -1,0 +1,85 @@
+{
+    "guidelines": [
+        {
+            "id": "STEMI-001",
+            "title": "Acute ST-Elevation Myocardial Infarction (STEMI) Diagnosis",
+            "criteria": [
+                "Chest pain or discomfort lasting >20 minutes",
+                "ST elevation ≥2mm in contiguous precordial leads (V1-V4) or ≥1mm in limb leads",
+                "New left bundle branch block",
+                "Elevated cardiac biomarkers (troponin, CK-MB)"
+            ],
+            "risk_factors": [
+                "Age >45 years",
+                "Male gender",
+                "Hypertension",
+                "Diabetes mellitus",
+                "Smoking",
+                "Family history of premature CAD",
+                "Dyslipidemia"
+            ],
+            "management": [
+                "Immediate ECG",
+                "Cardiac biomarkers",
+                "Aspirin 325mg",
+                "Nitroglycerin if BP >90mmHg",
+                "Morphine for pain",
+                "Oxygen if SpO2 <90%",
+                "Primary PCI within 90 minutes or fibrinolysis within 30 minutes"
+            ]
+        },
+        {
+            "id": "NSTEMI-001",
+            "title": "Non-ST-Elevation Myocardial Infarction (NSTEMI) Diagnosis",
+            "criteria": [
+                "Chest pain or discomfort",
+                "ST depression or T-wave inversions",
+                "Elevated cardiac biomarkers",
+                "No ST elevation"
+            ],
+            "risk_factors": [
+                "Same as STEMI",
+                "Prior CAD",
+                "Peripheral vascular disease"
+            ],
+            "management": [
+                "Immediate ECG",
+                "Cardiac biomarkers",
+                "Aspirin 325mg",
+                "Nitroglycerin if BP >90mmHg",
+                "Beta-blocker if no contraindications",
+                "Risk stratification (TIMI or GRACE score)",
+                "Early invasive strategy for high-risk patients"
+            ]
+        },
+        {
+            "id": "CHEST-PAIN-001",
+            "title": "Chest Pain Evaluation",
+            "criteria": [
+                "Acute onset",
+                "Quality (pressure, tightness, burning)",
+                "Location (substernal, radiating)",
+                "Associated symptoms (dyspnea, diaphoresis, nausea)",
+                "Duration",
+                "Provoking factors",
+                "Risk factors for CAD"
+            ],
+            "differential_diagnosis": [
+                "Acute coronary syndrome",
+                "Aortic dissection",
+                "Pulmonary embolism",
+                "Pneumonia",
+                "Gastroesophageal reflux",
+                "Musculoskeletal pain",
+                "Anxiety"
+            ],
+            "initial_evaluation": [
+                "Vital signs",
+                "12-lead ECG",
+                "Cardiac biomarkers",
+                "Chest X-ray",
+                "Basic laboratory tests"
+            ]
+        }
+    ]
+} 

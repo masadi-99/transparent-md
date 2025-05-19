@@ -1,0 +1,26 @@
+{
+    "patient_id": "P001",
+    "age": 45,
+    "gender": "male",
+    "chief_complaint": "Chest pain and shortness of breath for 2 hours",
+    "history_of_present_illness": "Patient reports sudden onset of severe, crushing chest pain radiating to left arm and jaw, associated with diaphoresis and shortness of breath. Pain started while watching TV and has been constant for 2 hours. No prior similar episodes. History of hypertension and type 2 diabetes.",
+    "physical_examination": {
+        "vital_signs": "BP: 160/95 mmHg, HR: 110 bpm, RR: 24/min, Temp: 37.2°C, SpO2: 94% on room air",
+        "general": "Anxious, diaphoretic, in moderate distress",
+        "chest": "Normal breath sounds, no rales or wheezing",
+        "cardiac": "Regular rate and rhythm, no murmurs or gallops",
+        "abdomen": "Soft, non-tender, non-distended"
+    },
+    "laboratory_findings": {
+        "troponin": "2.5 ng/mL (elevated)",
+        "ck_mb": "25 U/L (elevated)",
+        "wbc": "12,000/mm³",
+        "hemoglobin": "14.2 g/dL",
+        "platelets": "250,000/mm³"
+    },
+    "imaging_findings": {
+        "chest_xray": "No acute cardiopulmonary process",
+        "ecg": "ST elevation in leads V1-V4, Q waves in V1-V2"
+    },
+    "additional_notes": "Patient is a current smoker (1 pack/day for 20 years). Family history of premature CAD in father (MI at age 50)."
+} 
