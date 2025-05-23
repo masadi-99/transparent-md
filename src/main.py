@@ -99,7 +99,7 @@ def main():
     
     results = {
         "vignette_id": vignette.patient_id,
-        "diagnostic_steps": [step.dict() for step in diagnostic_steps],
+        "diagnostic_steps": [step.model_dump() for step in diagnostic_steps],
         "evaluation": evaluation_results,
         "overall_score": overall_score
     }
