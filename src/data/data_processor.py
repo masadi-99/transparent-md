@@ -21,9 +21,12 @@ class DataProcessor:
     
     def load_vignette(self, vignette_id: str) -> ClinicalVignette:
         """Load a clinical vignette from JSON file."""
+        # Try both with and without .json extension
         vignette_path = self.raw_dir / f"{vignette_id}.json"
         if not vignette_path.exists():
-            raise FileNotFoundError(f"Vignette {vignette_id} not found")
+            vignette_path = self.raw_dir / vignette_id
+            if not vignette_path.exists():
+                raise FileNotFoundError(f"Vignette {vignette_id} not found in {self.raw_dir}")
         
         with open(vignette_path, 'r') as f:
             data = json.load(f)
@@ -43,10 +46,11 @@ class DataProcessor:
             guideline_path = self.guidelines_dir / "general.json"
             
         if not guideline_path.exists():
-            raise FileNotFoundError(f"Guidelines for {specialty or 'general'} not found")
+            raise FileNotFoundError(f"Guidelines for {specialty or 'general'} not found in {self.guidelines_dir}")
         
         with open(guideline_path, 'r') as f:
-            return json.load(f)
+            data = json.load(f)
+            return data.get("guidelines", [])
     
     def preprocess_vignette(self, vignette: ClinicalVignette) -> Dict:
         """Preprocess a clinical vignette for LLM input."""
@@ -74,7 +78,7 @@ class DataProcessor:
         """Load processed data from JSON file."""
         input_path = self.processed_dir / filename
         if not input_path.exists():
-            raise FileNotFoundError(f"Processed data file {filename} not found")
+            raise FileNotFoundError(f"Processed data file {filename} not found in {self.processed_dir}")
         
         with open(input_path, 'r') as f:
             return json.load(f) 

@@ -9,11 +9,9 @@ class LLMConfig(BaseModel):
     model_name: str = "gpt-4"
     temperature: float = 0.1
     max_tokens: int = 2000
-    model_kwargs: Dict = {
-        "top_p": 1.0,
-        "frequency_penalty": 0.0,
-        "presence_penalty": 0.0
-    }
+    top_p: float = 1.0
+    frequency_penalty: float = 0.0
+    presence_penalty: float = 0.0
 
 class LLMInterface:
     """Interface for interacting with language models."""
@@ -24,7 +22,9 @@ class LLMInterface:
             model_name=config.model_name,
             temperature=config.temperature,
             max_tokens=config.max_tokens,
-            model_kwargs=config.model_kwargs
+            top_p=config.top_p,
+            frequency_penalty=config.frequency_penalty,
+            presence_penalty=config.presence_penalty
         )
     
     def generate_clinical_reasoning(
