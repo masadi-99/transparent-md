@@ -42,19 +42,29 @@ def main():
     args = parse_args()
     config = load_config(args.config)
     
-    # Initialize components
-    data_processor = DataProcessor(Path(args.output).parent)
+    # Get the project root directory (where src/ is located)
+    project_root = Path(__file__).parent.parent
+    
+    # Initialize components with correct paths
+    data_processor = DataProcessor(project_root / "data")
     llm_interface = LLMInterface(LLMConfig(**config["llm"]))
     evaluation_metrics = EvaluationMetrics(config["evaluation"]["model_name"])
     
     # Load and process input
-    vignette = data_processor.load_vignette(Path(args.input).stem)
+    input_path = Path(args.input)
+    if not input_path.is_absolute():
+        input_path = project_root / input_path
+    
+    vignette = data_processor.load_vignette(input_path.stem)
     processed_vignette = data_processor.preprocess_vignette(vignette)
     
     # Load guidelines
     guidelines = []
     if args.guidelines:
-        guidelines = data_processor.load_guidelines(Path(args.guidelines).stem)
+        guidelines_path = Path(args.guidelines)
+        if not guidelines_path.is_absolute():
+            guidelines_path = project_root / guidelines_path
+        guidelines = data_processor.load_guidelines(guidelines_path.stem)
     
     # Generate clinical reasoning
     reasoning_engine = TransparentReasoningEngine(args.guidelines)
@@ -83,6 +93,8 @@ def main():
     
     # Save results
     output_dir = Path(args.output)
+    if not output_dir.is_absolute():
+        output_dir = project_root / output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
     
     results = {
