@@ -18,6 +18,54 @@ class DiReCTIntegration:
         self.samples_dir = Path(samples_dir)
         self.kg_dir = Path(kg_dir) if kg_dir else None
         
+    def _extract_observations_from_kg(self, kg_data: Dict) -> List[Dict]:
+        """Extract observations and their rationales from the knowledge graph structure."""
+        observations = []
+        
+        def process_node(node: Dict, path: List[str] = None):
+            if path is None:
+                path = []
+                
+            for key, value in node.items():
+                if isinstance(value, dict):
+                    # Check if this is an observation node (ends with $Input followed by any number)
+                    if "$Input" in key:
+                        # Get the rationale from the parent node
+                        rationale = path[-1] if path else "Based on clinical presentation"
+                        # Clean up the observation text
+                        observation = key.split("$")[0].strip()
+                        # Get diagnosis from the root node
+                        diagnosis = path[0].split("$")[0] if path else "Unknown"
+                        
+                        observations.append({
+                            "observation": observation,
+                            "rationale": rationale,
+                            "diagnosis": diagnosis
+                        })
+                    
+                    # Process child nodes
+                    process_node(value, path + [key])
+        
+        process_node(kg_data)
+        return observations
+        
+    def _extract_clinical_note(self, sample_data: Dict) -> str:
+        """Extract the clinical note from the sample data."""
+        note_parts = []
+        
+        # Find all input fields dynamically
+        input_fields = [key for key in sample_data.keys() if key.startswith("input")]
+        
+        # Sort input fields to maintain consistent order
+        input_fields.sort(key=lambda x: int(x.replace("input", "")) if x.replace("input", "").isdigit() else float('inf'))
+        
+        # Combine all input fields that contain clinical information
+        for key in input_fields:
+            if key in sample_data and sample_data[key] != "None\n":
+                note_parts.append(sample_data[key])
+                
+        return "\n".join(note_parts)
+        
     def load_sample(self, sample_id: str) -> DiReCTSample:
         """Load a DiReCT sample with its associated knowledge graph."""
         sample_path = self.samples_dir / sample_id
@@ -28,20 +76,21 @@ class DiReCTIntegration:
         if sample_path.suffix == '.json':
             with open(sample_path, 'r') as f:
                 sample_data = json.load(f)
+                
+            # Extract clinical note
+            clinical_note = self._extract_clinical_note(sample_data)
+            
+            # Extract observations from the knowledge graph structure
+            observations = self._extract_observations_from_kg(sample_data)
+            
         elif sample_path.suffix == '.txt':
             with open(sample_path, 'r') as f:
                 clinical_note = f.read()
-                # For txt files, create a basic structure
-                sample_data = {
-                    "clinical_note": clinical_note,
-                    "observations": [
-                        {
-                            "observation": "Extracted from clinical note",
-                            "rationale": "Based on clinical presentation",
-                            "diagnosis": "To be determined"
-                        }
-                    ]
-                }
+                observations = [{
+                    "observation": "Extracted from clinical note",
+                    "rationale": "Based on clinical presentation",
+                    "diagnosis": "To be determined"
+                }]
         else:
             raise ValueError(f"Unsupported file format: {sample_path.suffix}")
             
@@ -61,9 +110,9 @@ class DiReCTIntegration:
                     kg_data = json.load(f)
                     
         return DiReCTSample(
-            clinical_note=sample_data["clinical_note"],
+            clinical_note=clinical_note,
             observations=[
-                DiReCTObservation(**obs) for obs in sample_data["observations"]
+                DiReCTObservation(**obs) for obs in observations
             ],
             knowledge_graph=kg_data
         )
