@@ -7,28 +7,27 @@ from pydantic import BaseModel
 class ClinicalVignette(BaseModel):
     """Represents a clinical case with patient information and findings."""
     patient_id: str
-    age: int
-    gender: str
-    chief_complaint: str
-    history_of_present_illness: str
-    physical_examination: Dict[str, str]
-    laboratory_findings: Dict[str, str]
-    imaging_findings: Optional[Dict[str, str]] = None
-    additional_notes: Optional[str] = None
     clinical_info: str
     observations: List[str]
     diagnoses: List[str]
     knowledge_graph: Optional[Dict] = None
+    # Optional fields that might be present in some formats
+    age: Optional[int] = None
+    gender: Optional[str] = None
+    chief_complaint: Optional[str] = None
+    history_of_present_illness: Optional[str] = None
+    physical_examination: Optional[Dict[str, str]] = None
+    laboratory_findings: Optional[Dict[str, str]] = None
+    imaging_findings: Optional[Dict[str, str]] = None
+    additional_notes: Optional[str] = None
 
 class DiagnosticStep(BaseModel):
     """Represents a single step in the diagnostic reasoning process."""
     step_number: int
-    reasoning: str
-    supporting_evidence: List[str]
-    guideline_reference: Optional[str] = None
-    confidence_score: float
     observation: str
+    reasoning: str
     diagnosis: str
+    confidence: float
     guideline_references: List[str]
 
 class ClinicalReasoningEngine(ABC):
@@ -40,12 +39,12 @@ class ClinicalReasoningEngine(ABC):
         pass
     
     @abstractmethod
-    def get_guideline_references(self, diagnostic_step: DiagnosticStep) -> List[str]:
+    def get_guideline_references(self, step: DiagnosticStep) -> List[str]:
         """Retrieve relevant medical guideline references for a diagnostic step."""
         pass
     
     @abstractmethod
-    def evaluate_confidence(self, diagnostic_step: DiagnosticStep) -> float:
+    def evaluate_confidence(self, step: DiagnosticStep) -> float:
         """Evaluate the confidence level of a diagnostic step."""
         pass
 
@@ -93,13 +92,13 @@ class TransparentReasoningEngine(ClinicalReasoningEngine):
                 observation=obs,
                 reasoning=self._generate_reasoning(obs, dx, kg_data),
                 diagnosis=dx,
-                confidence_score=0.0,  # Will be updated
+                confidence=0.0,  # Will be updated
                 guideline_references=[]
             )
             
             # Update step with references and confidence
             step.guideline_references = self.get_guideline_references(step)
-            step.confidence_score = self.evaluate_confidence(step)
+            step.confidence = self.evaluate_confidence(step)
             
             steps.append(step)
             
