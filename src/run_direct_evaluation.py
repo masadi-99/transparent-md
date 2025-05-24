@@ -29,6 +29,13 @@ def load_config(config_path: str = None) -> Dict:
         }
     }
 
+def find_sample_files(samples_dir: Path) -> List[Path]:
+    """Find all sample files recursively in the samples directory."""
+    sample_files = []
+    for ext in ['.json', '.txt']:
+        sample_files.extend(samples_dir.rglob(f"*{ext}"))
+    return sample_files
+
 def main():
     args = parse_args()
     config = load_config(args.config)
@@ -46,10 +53,15 @@ def main():
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     
+    # Find all sample files
+    sample_files = find_sample_files(Path(args.samples_dir))
+    print(f"Found {len(sample_files)} sample files")
+    
     # Process each sample
     results = {}
-    for sample_file in Path(args.samples_dir).glob("*.json"):
-        sample_id = sample_file.stem
+    for sample_file in sample_files:
+        # Use relative path from samples_dir as sample_id
+        sample_id = str(sample_file.relative_to(Path(args.samples_dir)))
         print(f"Processing sample: {sample_id}")
         
         try:

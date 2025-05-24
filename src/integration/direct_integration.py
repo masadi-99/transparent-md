@@ -20,17 +20,42 @@ class DiReCTIntegration:
         
     def load_sample(self, sample_id: str) -> DiReCTSample:
         """Load a DiReCT sample with its associated knowledge graph."""
-        sample_path = self.samples_dir / f"{sample_id}.json"
+        sample_path = self.samples_dir / sample_id
         if not sample_path.exists():
             raise FileNotFoundError(f"Sample {sample_id} not found in {self.samples_dir}")
             
-        with open(sample_path, 'r') as f:
-            sample_data = json.load(f)
+        # Handle different file formats
+        if sample_path.suffix == '.json':
+            with open(sample_path, 'r') as f:
+                sample_data = json.load(f)
+        elif sample_path.suffix == '.txt':
+            with open(sample_path, 'r') as f:
+                clinical_note = f.read()
+                # For txt files, create a basic structure
+                sample_data = {
+                    "clinical_note": clinical_note,
+                    "observations": [
+                        {
+                            "observation": "Extracted from clinical note",
+                            "rationale": "Based on clinical presentation",
+                            "diagnosis": "To be determined"
+                        }
+                    ]
+                }
+        else:
+            raise ValueError(f"Unsupported file format: {sample_path.suffix}")
             
         # Load knowledge graph if available
         kg_data = None
         if self.kg_dir:
-            kg_path = self.kg_dir / f"{sample_id}_kg.json"
+            # Try to find matching knowledge graph
+            kg_name = sample_path.stem
+            kg_path = self.kg_dir / f"{kg_name}_kg.json"
+            if not kg_path.exists():
+                # Try parent directory name as condition
+                condition = sample_path.parent.name
+                kg_path = self.kg_dir / f"{condition}_kg.json"
+            
             if kg_path.exists():
                 with open(kg_path, 'r') as f:
                     kg_data = json.load(f)
