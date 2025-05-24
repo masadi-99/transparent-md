@@ -3,7 +3,7 @@ from pathlib import Path
 import json
 from typing import Dict, List
 
-from src.core.clinical_reasoning import TransparentReasoningEngine
+from src.core.clinical_reasoning import TransparentReasoningEngine, ClinicalVignette
 from src.integration.direct_integration import DiReCTIntegration
 from src.llm.llm_interface import LLMInterface, LLMConfig
 
@@ -67,7 +67,16 @@ def main():
         try:
             # Load and convert sample
             sample = direct_integration.load_sample(sample_id)
-            vignette = direct_integration.convert_to_vignette(sample)
+            vignette_data = direct_integration.convert_to_vignette(sample)
+            
+            # Create ClinicalVignette object
+            vignette = ClinicalVignette(
+                patient_id=vignette_data["patient_id"],
+                clinical_info=vignette_data["clinical_info"],
+                observations=vignette_data["observations"],
+                diagnoses=vignette_data["diagnoses"],
+                knowledge_graph=vignette_data["knowledge_graph"]
+            )
             
             # Generate predictions
             diagnostic_steps = reasoning_engine.process_vignette(vignette)

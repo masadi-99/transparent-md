@@ -93,7 +93,7 @@ class TransparentReasoningEngine(ClinicalReasoningEngine):
                 observation=obs,
                 reasoning=self._generate_reasoning(obs, dx, kg_data),
                 diagnosis=dx,
-                confidence=0.0,  # Will be updated
+                confidence_score=0.0,  # Will be updated
                 guideline_references=[]
             )
             
